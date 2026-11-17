@@ -59,6 +59,8 @@ model Branch {
   forkLamportTick Int?     @map("fork_lamport_tick")
   lockedPrngSeed  BigInt   @map("locked_prng_seed")
   createdAt       DateTime @default(now()) @map("created_at")
+  editedPrompt String?  @map("edited_prompt")
+  editedState  Json?    @map("edited_state")
 
   parent   Branch?         @relation("BranchTree", fields: [parentBranchId], references: [branchId])
   children Branch[]        @relation("BranchTree")
