@@ -7,6 +7,6 @@ def test_derive_is_deterministic_and_label_specific():
     assert s.derive("random") == s.derive("random")
     assert s.derive("random") != s.derive("numpy")
 
-def test_rejects_over_64_bits():
+def test_rejects_seed_above_2_53():
     with pytest.raises(ValueError):
-        LockedSeed(1 << 64)
+        LockedSeed(1 << 53)

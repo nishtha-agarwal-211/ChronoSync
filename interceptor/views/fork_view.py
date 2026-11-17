@@ -2,8 +2,9 @@ from __future__ import annotations
 
 from typing import Any
 
-from pydantic import BaseModel, ConfigDict, model_validator
+from pydantic import BaseModel, ConfigDict, Field, model_validator
 
+from interceptor.models.seed import MAX_SEED
 from .commit_view import canonical_json
 
 
@@ -13,7 +14,7 @@ class ForkRequest(BaseModel):
 
     parent_branch_id: str
     fork_lamport_tick: int  # K
-    locked_prng_seed: int
+    locked_prng_seed: int = Field(ge=0, le=MAX_SEED)
     edited_prompt: str | None = None
     edited_state: dict[str, Any] | None = None
 
