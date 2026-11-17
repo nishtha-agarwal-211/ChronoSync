@@ -123,6 +123,8 @@ model StateDiff {
   right   StateSnapshot @relation("RightState", fields: [rightStateHash], references: [stateHash])
   patches DiffPatch[]
 
+  @@index([rightStateHash])
+
   @@unique([leftStateHash, rightStateHash])
   @@map("state_diffs")
 }
