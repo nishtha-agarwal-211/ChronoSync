@@ -1,5 +1,4 @@
 import { Router } from "express";
-import { Prisma } from "../../generated/prisma/client.js";
 import { prisma } from "../db.js";
 import { forkSchema } from "../schemas/fork.js";
 import { ForkError, forkBranch } from "../services/forkBranch.js";
