@@ -13,6 +13,6 @@ test("numeric-string keys sort as strings", () => {
 });
 
 test("integral floats serialize without .0 (differs from Python)", () => {
-  // Differs from Python where 1.0 serializes with trailing zero
+  assert.equal(canonicalJson({ x: 1.0 }), '{"x":1}');
 });
 
