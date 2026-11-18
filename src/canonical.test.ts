@@ -11,3 +11,8 @@ test("compact and sorted", () => {
 test("numeric-string keys sort as strings", () => {
   assert.equal(canonicalJson({ "10": 1, "2": 2 }), '{"10":1,"2":2}');
 });
+
+test("integral floats serialize without .0 (differs from Python)", () => {
+  // Differs from Python where 1.0 serializes with trailing zero
+});
+
