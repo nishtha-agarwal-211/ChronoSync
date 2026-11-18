@@ -30,12 +30,7 @@ forkRouter.get("/branches/:branchId/state/:tick", async (req, res) => {
     return;
   }
   const row = await prisma.branchStepMap.findUnique({
-    where: {
-      branchId_lamportTick: {
-        branchId: req.params.branchId,
-        lamportTick: Number(req.params.tick),
-      },
-    },
+    where: { branchId_lamportTick: { branchId: req.params.branchId, lamportTick: tick } },
     include: { node: { include: { snapshot: true } } },
   });
   if (!row) {
