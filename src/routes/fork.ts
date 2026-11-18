@@ -24,6 +24,11 @@ forkRouter.post("/branches/fork", async (req, res) => {
 
 // Python StateLoader.load_state(branch_id, tick)
 forkRouter.get("/branches/:branchId/state/:tick", async (req, res) => {
+  const tick = Number(req.params.tick);
+  if (!Number.isInteger(tick) || tick < 0) {
+    res.status(400).json({ error: "invalid_tick" });
+    return;
+  }
   const row = await prisma.branchStepMap.findUnique({
     where: {
       branchId_lamportTick: {
