@@ -75,5 +75,5 @@ export async function commitStep(b: CommitInput) {
       gate_passed: b.ast_metrics.gate_passed,
       cumulative_cost: agg._sum.tokenCost?.toNumber() ?? 0,
     };
-  }, { maxWait: 5000 });
+  }, { maxWait: 5000, timeout: 20000 });
 }
