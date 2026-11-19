@@ -16,12 +16,22 @@ export async function forkBranch(b: ForkInput) {
     });
     if (!parent) throw new ForkError(404, "unknown_parent_branch");
 
+    const maxTick = await tx.branchStepMap.findFirst({
+      where: { branchId: parent.branchId },
+      orderBy: { lamportTick: "desc" },
+      select: { lamportTick: true },
+    });
+    if (maxTick && b.fork_lamport_tick > maxTick.lamportTick) {
+      throw new ForkError(400, "fork_tick_beyond_parent");
+    }
+
     const child = await tx.branch.create({
       data: {
         parentBranchId: parent.branchId,
         forkLamportTick: b.fork_lamport_tick,
         lockedPrngSeed: BigInt(b.locked_prng_seed),
         ...(b.edited_prompt !== undefined && { editedPrompt: b.edited_prompt }),
+        ...(b.new_branch_name !== undefined && { name: b.new_branch_name }),
         ...(b.edited_state !== undefined && {
           editedState: b.edited_state as Prisma.InputJsonValue,
         }),
