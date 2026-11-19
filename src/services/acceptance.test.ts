@@ -77,3 +77,21 @@ test("duplicate tick on a branch is rejected and rolled back", async () => {
   assert.equal(await prisma.stateSnapshot.count({ where: { stateHash: sha256Hex(second) } }), 0);
   assert.equal(await prisma.branchStepMap.count({ where: { branchId: br.branchId } }), 1);
 });
+
+test("commit stores max_allowed_files in ast_vfs_guardrails", async () => {
+  const br = await prisma.branch.create({ data: { name: "t-guard", lockedPrngSeed: 1n } });
+  const node = await commitStep({
+    ...step(br.branchId, agent.agentId, 0, { guard: run }),
+    ast_metrics: {
+      net_loc_delta: 5,
+      dead_ast_nodes: 0,
+      files_created_delta: 2,
+      max_allowed_files: 3,
+      gate_passed: true,
+    },
+  });
+  const g = await prisma.astVfsGuardrail.findUnique({ where: { nodeId: node.node_id } });
+  assert.equal(g?.maxAllowedFiles, 3);
+  assert.equal(g?.filesCreatedDelta, 2);
+});
+
