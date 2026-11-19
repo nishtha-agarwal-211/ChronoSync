@@ -4,6 +4,7 @@ const obj = z.record(z.string(), z.unknown());
 
 export const forkSchema = z
   .object({
+    new_branch_name: z.string().min(1).optional(),
     parent_branch_id: z.string().min(1),
     fork_lamport_tick: z.number().int().min(1),
     locked_prng_seed: z.union([

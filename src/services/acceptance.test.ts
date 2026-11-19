@@ -95,3 +95,24 @@ test("commit stores max_allowed_files in ast_vfs_guardrails", async () => {
   assert.equal(g?.filesCreatedDelta, 2);
 });
 
+test("fork beyond parent's last step is rejected", async () => {
+  const main = await prisma.branch.create({ data: { name: "t-short", lockedPrngSeed: 1n } });
+  for (let t = 0; t < 3; t++) await commitStep(step(main.branchId, agent.agentId, t, { short: run, t }));
+  await assert.rejects(
+    forkBranch({ parent_branch_id: main.branchId, fork_lamport_tick: 10, locked_prng_seed: 1, edited_prompt: "x" }),
+    (e) => e instanceof ForkError && e.code === "fork_tick_beyond_parent",
+  );
+});
+
+test("fork stores new_branch_name", async () => {
+  const main = await prisma.branch.create({ data: { name: "t-name", lockedPrngSeed: 1n } });
+  for (let t = 0; t < 3; t++) await commitStep(step(main.branchId, agent.agentId, t, { named: run, t }));
+  const r = await forkBranch({
+    parent_branch_id: main.branchId, fork_lamport_tick: 2, locked_prng_seed: 1,
+    new_branch_name: "try-b", edited_prompt: "x",
+  });
+  const b = await prisma.branch.findUnique({ where: { branchId: r.new_branch_id } });
+  assert.equal(b?.name, "try-b");
+});
+
+
