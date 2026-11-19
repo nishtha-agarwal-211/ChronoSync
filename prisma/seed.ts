@@ -3,6 +3,8 @@ import { commitStep } from "../src/services/commitStep.js";
 
 const agent = await prisma.agent.create({ data: { modelName: "gpt-4o-mini" } });
 const main = await prisma.branch.create({ data: { name: "main", lockedPrngSeed: 42n } });
+const emb = (tick: number, salt = 0) =>
+  Array.from({ length: 1536 }, (_, j) => Math.sin(tick * 31 + j + salt));
 
 for (let tick = 1; tick <= 12; tick++) {
   await commitStep({
@@ -13,7 +15,7 @@ for (let tick = 1; tick <= 12; tick++) {
     llm_output: `step ${tick} output`,
     token_cost: 0.002,
     state_blob: { step: tick, memory: `after step ${tick}` },
-    embedding: Array.from({ length: 1536 }, (_, j) => Math.sin(tick * 31 + j)),
+    embedding: emb(tick),
     io_logs:
       tick % 3 === 0
         ? [{ io_seq_no: 0, kind: "http", req_payload: { url: "https://example.com" }, res_payload: { status: 200 } }]
