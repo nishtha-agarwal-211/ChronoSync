@@ -20,6 +20,7 @@ export const commitSchema = z.object({
     }),
   ),
   ast_metrics: z.object({
+    max_allowed_files: z.number().int().min(0).default(0),
     net_loc_delta: z.number().int(),
     dead_ast_nodes: z.number().int().min(0),
     files_created_delta: z.number().int().min(0),
@@ -27,4 +28,4 @@ export const commitSchema = z.object({
   }),
 });
 
-export type CommitInput = z.infer<typeof commitSchema>;
+export type CommitInput = z.input<typeof commitSchema>;

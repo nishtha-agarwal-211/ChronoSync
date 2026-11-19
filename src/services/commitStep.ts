@@ -55,6 +55,7 @@ export async function commitStep(b: CommitInput) {
     // 5. Guardrail row
     await tx.astVfsGuardrail.create({
       data: {
+        maxAllowedFiles: b.ast_metrics.max_allowed_files ?? 0,
         nodeId: node.nodeId,
         filesCreatedDelta: b.ast_metrics.files_created_delta,
         netLocDelta: b.ast_metrics.net_loc_delta,
